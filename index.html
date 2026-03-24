@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xpecial | Plataforma de Experiencias Digitales</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        apple: {
+                            gray: '#f5f5f7', 
+                            text: '#1d1d1f', 
+                            muted: '#86868b', 
+                            blue: '#0066cc', 
+                            dark: '#000000'
+                        },
+                        brand: {
+                            orange: '#f56300',
+                            teal: '#00a389',
+                            purple: '#6b21a8'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { 
+            background-color: #f5f5f7; 
+            color: #1d1d1f;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+        
+        /* Utilidades de diseño Apple */
+        .apple-card {
+            background-color: #ffffff;
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .apple-card:hover {
+            transform: scale(1.01);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .apple-glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* Teléfono Realista CSS */
+        .iphone-mockup {
+            width: 260px;
+            height: 540px;
+            background-color: #000;
+            border-radius: 3rem;
+            box-shadow: 
+                0 0 0 2px #444,
+                0 0 0 6px #e5e5ea,
+                0 30px 60px -12px rgba(0, 0, 0, 0.3),
+                inset 0 0 10px rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
+            border: 8px solid #000;
+        }
+        @media (min-width: 768px) {
+            .iphone-mockup { width: 300px; height: 620px; border-radius: 3.5rem; }
+        }
+
+        .iphone-dynamic-island {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90px;
+            height: 25px;
+            background-color: #000;
+            border-radius: 20px;
+            z-index: 30;
+        }
+
+        /* Caja Física Premium */
+        .premium-box {
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            box-shadow: 
+                -10px 10px 30px rgba(0,0,0,0.05),
+                inset 2px 2px 5px rgba(255,255,255,1),
+                inset -2px -2px 5px rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        /* Imágenes de productos con zoom suave */
+        .product-img-container {
+            overflow: hidden;
+            position: relative;
+        }
+        .product-img-container img {
+            transition: transform 0.5s ease;
+        }
+        .apple-card:hover .product-img-container img {
+            transform: scale(1.05);
+        }
+
+        /* Efecto de legibilidad de texto para fondos animados */
+        .text-glow {
+            text-shadow: 0 0 20px rgba(255,255,255,0.8), 0 0 40px rgba(255,255,255,0.6);
+        }
+
+        /* Ocultar vistas SPA */
+        .spa-view { display: none; animation: fadeIn 0.4s ease-out forwards; }
+        .spa-view.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Scrollbar limpia */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d2d2d7; border-radius: 4px; }
+    </style>
+</head>
+<body class="font-sans">
+
+    <!-- Navegación Apple Glass -->
+    <nav class="sticky top-0 w-full z-[70] apple-glass transition-all duration-300">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16 md:h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer" onclick="switchView('home')">
+                    <i data-lucide="infinity" class="text-apple-text w-6 h-6"></i>
+                    <span class="font-semibold text-xl tracking-tight text-apple-text">Xpecial</span>
+                </div>
+                
+                <!-- Enlaces Desktop -->
+                <div class="hidden md:flex space-x-7 items-center">
+                    <button id="nav-home" onclick="switchView('home')" class="text-xs font-medium text-apple-text transition-colors">Plataforma</button>
+                    <button id="nav-regalos" onclick="switchView('regalos')" class="text-xs font-medium text-apple-muted hover:text-apple-text transition-colors">Regalos</button>
+                    <button id="nav-certificados" onclick="switchView('certificados')" class="text-xs font-medium text-apple-muted hover:text-apple-text transition-colors">Certificados</button>
+                    <button id="nav-restaurant" onclick="switchView('restaurant')" class="text-xs font-medium text-apple-muted hover:text-apple-text transition-colors">Menús</button>
+                    <button id="nav-xpecialist" onclick="switchView('xpecialist')" class="text-xs font-medium text-apple-muted hover:text-apple-text transition-colors">Almacenes</button>
+                    <button id="nav-store" onclick="switchView('store')" class="text-xs font-medium text-apple-muted hover:text-apple-text transition-colors">Lista de Espera</button>
+                </div>
+
+                <!-- Botones Derecha -->
+                <div class="flex items-center gap-4">
+                    <!-- Botón Destacado de Reservar -->
+                    <button onclick="switchView('store')" class="hidden sm:block bg-brand-orange hover:bg-orange-600 text-white text-[11px] font-bold px-4 py-2 rounded-full transition-colors tracking-wide uppercase">
+                        Reservar Acceso
+                    </button>
+                    
+                    <button onclick="toggleCart()" class="relative p-1 text-apple-text hover:opacity-70 transition-opacity">
+                        <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                        <span class="absolute -top-1 -right-1 bg-apple-text text-white text-[9px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center">2</span>
+                    </button>
+                    <button onclick="toggleMobileMenu()" class="md:hidden p-1 text-apple-text">
+                        <i data-lucide="menu" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Menú Móvil -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white/95 backdrop-blur-xl border-b border-gray-200 absolute w-full left-0 top-full shadow-lg">
+            <div class="px-6 py-4 space-y-4 flex flex-col">
+                <button onclick="switchView('home'); toggleMobileMenu()" class="text-left text-lg font-medium text-apple-text border-b border-gray-100 pb-2">La Plataforma</button>
+                <button onclick="switchView('regalos'); toggleMobileMenu()" class="text-left text-lg font-medium text-apple-text border-b border-gray-100 pb-2">Regalos B2B</button>
+                <button onclick="switchView('certificados'); toggleMobileMenu()" class="text-left text-lg font-medium text-apple-text border-b border-gray-100 pb-2">Certificados de Autenticidad</button>
+                <button onclick="switchView('restaurant'); toggleMobileMenu()" class="text-left text-lg font-medium text-apple-text border-b border-gray-100 pb-2">Menús NFC</button>
+                <button onclick="switchView('xpecialist'); toggleMobileMenu()" class="text-left text-lg font-medium text-apple-text border-b border-gray-100 pb-2">Almacenes y Logística</button>
+                <button onclick="switchView('store'); toggleMobileMenu()" class="text-left text-lg font-medium text-apple-text pb-2">Lista de Espera</button>
+                
+                <button onclick="switchView('store'); toggleMobileMenu()" class="w-full bg-brand-orange text-white text-sm font-bold py-3 rounded-full mt-4 uppercase tracking-widest">
+                    Reservar Acceso
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenedor Principal SPA -->
+    <main id="app-content">
+
+        <!-- ==========================================
+             VISTA 1: INICIO (HOME / SOFTWARE)
+        =========================================== -->
+        <section id="home-view" class="spa-view active">
+            
+            <!-- Hero Apple Style enfocado al SOFTWARE -->
+            <div class="pt-20 pb-12 md:pt-32 md:pb-16 px-4 text-center max-w-5xl mx-auto">
+                <h2 class="text-[11px] md:text-xs font-bold tracking-[0.2em] text-brand-orange uppercase mb-4">Acceso Anticipado</h2>
+                <h1 class="text-5xl md:text-7xl lg:text-[88px] font-bold tracking-tighter text-apple-text mb-8 leading-[1.05]">
+                    El software que conecta <br class="hidden md:block"> tu mundo físico.
+                </h1>
+                <p class="text-xl md:text-2xl text-apple-muted font-medium mb-10 max-w-3xl mx-auto leading-relaxed">
+                    Asegura tu lugar en nuestra plataforma cloud. Gestiona regalos inolvidables, certificados de autenticidad, menús interactivos o almacenes con tecnología NFC.
+                </p>
+                <button onclick="switchView('store')" class="bg-apple-text text-white rounded-full px-10 py-4 font-semibold hover:bg-black transition-colors text-lg shadow-xl shadow-gray-200">
+                    Apartar mi lugar (Lista de espera)
+                </button>
+                <p class="text-sm text-apple-muted mt-12 animate-bounce">Descubre la plataforma ↓</p>
+            </div>
+
+            <!-- SECUENCIA CINEMÁTICA CON SCROLL MEJORADA -->
+            <div id="scroll-sequence" class="relative h-[300vh] w-full bg-[#f5f5f7]">
+                <div class="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
+                    
+                    <!-- Textos dinámicos reposicionados más arriba (top-[8%] y text-glow para legibilidad) -->
+                    <div id="seq-text-1" class="absolute top-[8%] md:top-[12%] text-center px-4 w-full z-40 transition-opacity duration-100">
+                        <h3 class="text-3xl md:text-5xl font-bold tracking-tight text-apple-text text-glow">Un empaque ordinario...</h3>
+                    </div>
+                    
+                    <div id="seq-text-2" class="absolute top-[8%] md:top-[12%] text-center px-4 w-full z-40 opacity-0 transform translate-y-4 transition-all duration-300">
+                        <h3 class="text-3xl md:text-5xl font-bold tracking-tight text-apple-text text-glow">Se convierte en magia.</h3>
+                        <p class="text-apple-text font-medium mt-3 text-lg text-glow">Solo acércate.</p>
+                    </div>
+
+                    <!-- CAJA FÍSICA REALISTA -->
+                    <div id="seq-box" class="absolute z-30 w-56 h-56 md:w-72 md:h-72 rounded-[2rem] md:rounded-[2.5rem] shadow-2xl transform transition-transform duration-75 will-change-transform border-4 border-white overflow-hidden bg-black mt-10 md:mt-0">
+                        <img src="https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&q=80&w=600" alt="Regalo Premium" class="w-full h-full object-cover opacity-90">
+                        <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-md rounded-full w-10 h-10 flex items-center justify-center shadow-lg border border-white/50">
+                            <i data-lucide="wifi" class="w-4 h-4 text-apple-text rotate-90"></i>
+                        </div>
+                        <div id="seq-nfc-glow" class="absolute inset-0 bg-brand-teal rounded-[2.5rem] blur-2xl opacity-0 transition-opacity duration-300 -z-10 mix-blend-screen"></div>
+                    </div>
+
+                    <!-- TELÉFONO CELULAR (Ahora sube hasta el 25% de la pantalla, dejando el texto libre arriba) -->
+                    <div id="seq-phone" class="absolute z-20 iphone-mockup transform translate-y-[100vh] transition-transform duration-75 will-change-transform mt-10 md:mt-0">
+                        <div class="iphone-dynamic-island"></div>
+                        <div class="w-full h-full relative bg-[url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=600')] bg-cover bg-center">
+                            <div id="seq-screen-overlay" class="absolute inset-0 bg-black z-10 transition-opacity duration-500"></div>
+                            
+                            <div id="seq-ui-pop" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/30 backdrop-blur-sm opacity-0 scale-95 transition-all duration-500 delay-100">
+                                <div class="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/50 shadow-2xl mb-6">
+                                    <i data-lucide="play" class="w-6 h-6 text-white ml-1"></i>
+                                </div>
+                                <div class="bg-white/90 backdrop-blur-xl rounded-2xl p-4 mx-6 flex items-center gap-4 shadow-2xl w-[85%]">
+                                    <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center shrink-0">
+                                        <i data-lucide="heart" class="w-6 h-6 text-brand-orange fill-brand-orange"></i>
+                                    </div>
+                                    <div class="text-left">
+                                        <p class="text-apple-text text-sm font-bold leading-tight">Video Desbloqueado</p>
+                                        <p class="text-apple-muted text-[11px] mt-0.5">Te quiero mucho ❤️</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Features de la Plataforma (Software Focus) -->
+            <div class="max-w-6xl mx-auto px-4 pb-32 pt-20 border-t border-gray-200">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-3xl md:text-5xl font-bold tracking-tight text-apple-text mb-6">Tu control maestro.</h2>
+                    <p class="text-apple-muted text-lg font-medium">Desde nuestro panel web, tú decides qué sucede cuando alguien escanea tus productos físicos. Todo en tiempo real, sin instalar aplicaciones.</p>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-8 text-center relative z-20">
+                    <div class="apple-card p-10">
+                        <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6 text-apple-blue border border-blue-100">
+                            <i data-lucide="zap" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Cambios al instante</h3>
+                        <p class="text-apple-muted leading-relaxed font-medium text-sm">¿Subiste un menú o video incorrecto? Cámbialo en la nube y el chip físico se actualizará instantáneamente.</p>
+                    </div>
+                    <div class="apple-card p-10">
+                        <div class="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-6 text-purple-600 border border-purple-100">
+                            <i data-lucide="bar-chart-3" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Analíticas precisas</h3>
+                        <p class="text-apple-muted leading-relaxed font-medium text-sm">Sabe exactamente cuántas veces han abierto el regalo, consultado tu menú o escaneado tu stock.</p>
+                    </div>
+                    <div class="apple-card p-10">
+                        <div class="w-16 h-16 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-6 text-brand-orange border border-orange-100">
+                            <i data-lucide="users" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Multicuenta B2B</h3>
+                        <p class="text-apple-muted leading-relaxed font-medium text-sm">Gestiona múltiples locaciones, dale acceso a tus meseros o administradores con permisos personalizados.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navegación de Soluciones -->
+            <div class="bg-white rounded-t-[3rem] py-24 border-t border-gray-200">
+                <div class="max-w-6xl mx-auto px-4">
+                    <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 tracking-tight">Soluciones integradas para tu negocio.</h2>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        
+                        <div class="apple-card p-8 border border-gray-100 cursor-pointer group flex flex-col justify-between" onclick="switchView('regalos')">
+                            <div>
+                                <i data-lucide="gift" class="w-8 h-8 text-brand-orange mb-4"></i>
+                                <h3 class="text-2xl font-bold mb-3 tracking-tight">Regalos Digitales.</h3>
+                                <p class="text-apple-muted text-sm mb-8 leading-relaxed font-medium">Eleva tu florería o joyería. Ofrece mensajes en video vinculados a tus empaques y cajas premium.</p>
+                            </div>
+                            <span class="text-apple-text font-semibold group-hover:underline flex items-center gap-1">Ver modelo de regalos <i data-lucide="chevron-right" class="w-4 h-4"></i></span>
+                        </div>
+
+                        <div class="apple-card p-8 border border-gray-100 cursor-pointer group flex flex-col justify-between" onclick="switchView('certificados')">
+                            <div>
+                                <i data-lucide="award" class="w-8 h-8 text-brand-purple mb-4"></i>
+                                <h3 class="text-2xl font-bold mb-3 tracking-tight">Certificados.</h3>
+                                <p class="text-apple-muted text-sm mb-8 leading-relaxed font-medium">Emite certificados de autenticidad inviolables en tarjetas NFC o acrílicos para tus productos premium.</p>
+                            </div>
+                            <span class="text-apple-text font-semibold group-hover:underline flex items-center gap-1">Ver modelo de certificados <i data-lucide="chevron-right" class="w-4 h-4"></i></span>
+                        </div>
+
+                        <div class="apple-card p-8 border border-gray-100 cursor-pointer group flex flex-col justify-between" onclick="switchView('restaurant')">
+                            <div>
+                                <i data-lucide="utensils" class="w-8 h-8 text-gray-800 mb-4"></i>
+                                <h3 class="text-2xl font-bold mb-3 tracking-tight">Menús Restaurante.</h3>
+                                <p class="text-apple-muted text-sm mb-8 leading-relaxed font-medium">Menús interactivos NFC en mesa. Actualiza precios en la plataforma sin tener que volver a imprimir códigos QR.</p>
+                            </div>
+                            <span class="text-apple-text font-semibold group-hover:underline flex items-center gap-1">Ver solución gastronómica <i data-lucide="chevron-right" class="w-4 h-4"></i></span>
+                        </div>
+
+                        <div class="apple-card p-8 border border-gray-100 cursor-pointer group flex flex-col justify-between" onclick="switchView('xpecialist')">
+                            <div>
+                                <i data-lucide="warehouse" class="w-8 h-8 text-brand-teal mb-4"></i>
+                                <h3 class="text-2xl font-bold mb-3 tracking-tight">Almacenes.</h3>
+                                <p class="text-apple-muted text-sm mb-8 leading-relaxed font-medium">Gestión de inventario y trazabilidad logística. Registra información de pallets y cajas solo acercando el celular.</p>
+                            </div>
+                            <span class="text-apple-text font-semibold group-hover:underline flex items-center gap-1">Ver Xpecialist <i data-lucide="chevron-right" class="w-4 h-4"></i></span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             VISTA 2: REGALOS (B2B RETAIL)
+        =========================================== -->
+        <section id="regalos-view" class="spa-view">
+            <div class="bg-white border-b border-gray-200">
+                <div class="pt-24 pb-16 px-4 text-center max-w-3xl mx-auto">
+                    <h2 class="text-brand-orange font-semibold tracking-widest uppercase text-xs mb-3">Tiendas de Regalos & Retail</h2>
+                    <h1 class="text-4xl md:text-6xl font-bold tracking-tight text-apple-text mb-6">
+                        No vendas productos, <br> vende experiencias.
+                    </h1>
+                    <p class="text-lg text-apple-muted mb-8 leading-relaxed">
+                        Si tienes una florería, joyería o boutique, usa nuestro software en marca blanca. Ofrece a tus clientes adjuntar mensajes en video a sus regalos, cobra un extra por el servicio y diferénciate.
+                    </p>
+                </div>
+            </div>
+
+            <div class="max-w-6xl mx-auto px-4 py-20">
+                <div class="grid lg:grid-cols-2 gap-16 items-center">
+                    <div>
+                        <h3 class="text-3xl font-bold mb-6 tracking-tight">Hardware como medio, Software como valor.</h3>
+                        <p class="text-apple-muted text-lg mb-8">Nuestras cajas premium y acrílicos vienen sin logos. Tú usas nuestro software para cargar las emociones de tus clientes.</p>
+                        
+                        <div class="space-y-6">
+                            <div class="flex gap-4">
+                                <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
+                                    <span class="font-bold text-gray-400">1</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-lg tracking-tight">El Cliente Compra</h4>
+                                    <p class="text-apple-muted text-sm mt-1">Vendes tu arreglo o joya y ofreces el "Mensaje Sorpresa NFC" como un extra (Ej. +$150 MXN).</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
+                                    <span class="font-bold text-gray-400">2</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-lg tracking-tight">Usas la Plataforma</h4>
+                                    <p class="text-apple-muted text-sm mt-1">Te envían un video por WhatsApp. Abres tu dashboard de Xpecial, subes el video y lo vinculas a la caja con 1 clic.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-12 h-12 rounded-full bg-brand-orange/10 flex items-center justify-center shrink-0">
+                                    <span class="font-bold text-brand-orange">3</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-lg tracking-tight">Magia Inolvidable</h4>
+                                    <p class="text-apple-muted text-sm mt-1">Quien recibe el regalo acerca su celular. El video de tu cliente se reproduce al instante.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="apple-card p-4 bg-gray-50 border border-gray-100">
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden h-[400px] flex flex-col relative">
+                            <div class="border-b border-gray-100 p-4 flex justify-between items-center bg-gray-50/50">
+                                <span class="text-sm font-semibold flex items-center gap-2"><i data-lucide="cloud" class="w-4 h-4 text-brand-orange"></i> Dashboard Creador</span>
+                            </div>
+                            <div class="p-6 flex-1 flex flex-col items-center justify-center text-center">
+                                <i data-lucide="upload-cloud" class="w-12 h-12 text-gray-300 mb-4"></i>
+                                <h5 class="font-medium text-gray-900 mb-1">Arrastra el archivo de tu cliente aquí</h5>
+                                <p class="text-xs text-apple-muted">Xpecial codifica el video para reproducción sin apps.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             VISTA 3: XPECIAL RESTAURANT (MENÚS)
+        =========================================== -->
+        <section id="restaurant-view" class="spa-view">
+            <div class="bg-white border-b border-gray-200">
+                <div class="pt-24 pb-16 px-4 text-center max-w-4xl mx-auto">
+                    <h2 class="text-brand-orange font-semibold tracking-widest uppercase text-xs mb-3">Xpecial Restaurant</h2>
+                    <h1 class="text-4xl md:text-6xl font-bold tracking-tight text-apple-text mb-6">
+                        El menú del futuro <br> está en la mesa.
+                    </h1>
+                    <p class="text-lg text-apple-muted mb-8 max-w-2xl mx-auto leading-relaxed">
+                        Coloca nuestros displays NFC de alta gama en cada mesa. Tus comensales solo acercan el teléfono o escanean el QR para ver el menú. Tú actualizas platos y precios desde la nube.
+                    </p>
+                    <button onclick="switchView('store')" class="bg-apple-text text-white rounded-full px-8 py-3.5 font-medium hover:bg-black transition-colors shadow-md">
+                        Cotizar Displays
+                    </button>
+                </div>
+            </div>
+
+            <div class="max-w-6xl mx-auto px-4 py-20">
+                <div class="grid lg:grid-cols-2 gap-16 items-center">
+                    
+                    <!-- Imagen de contexto Restaurante -->
+                    <div class="relative">
+                        <div class="w-full aspect-[4/5] bg-gray-100 rounded-[2rem] overflow-hidden shadow-2xl relative">
+                            <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=800" alt="Mesa de restaurante con celular" class="w-full h-full object-cover">
+                            <!-- Overlay UI Menú -->
+                            <div class="absolute bottom-6 right-6 left-6 bg-white/95 backdrop-blur-xl p-4 rounded-2xl shadow-xl flex items-center gap-4">
+                                <div class="w-12 h-12 bg-gray-100 rounded-xl overflow-hidden shrink-0">
+                                    <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&q=80&w=200" alt="Pizza" class="w-full h-full object-cover">
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-apple-text leading-tight">Pizza Margherita Especial</h4>
+                                    <p class="text-xs text-brand-orange font-bold mt-1">$240.00 MXN <span class="text-gray-400 font-normal line-through ml-1">$280.00</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Puntos de valor de la plataforma -->
+                    <div>
+                        <h3 class="text-3xl font-bold mb-6 tracking-tight">Software pensado para hostelería.</h3>
+                        <p class="text-apple-muted text-lg mb-8">Olvídate de volver a pagar imprenta porque cambiaste el precio de un platillo. El ecosistema Xpecial es inmediato.</p>
+                        
+                        <div class="space-y-8">
+                            <div class="flex gap-4">
+                                <div class="w-12 h-12 rounded-full bg-orange-50 flex items-center justify-center shrink-0 border border-orange-100">
+                                    <i data-lucide="smartphone-nfc" class="w-6 h-6 text-brand-orange"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-lg tracking-tight">Doble Tecnología (NFC + QR)</h4>
+                                    <p class="text-apple-muted text-sm mt-1 leading-relaxed">Nuestros displays de mesa integran un chip NFC para lectura por aproximación y un código QR estético para celulares antiguos. Sin apps necesarias.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center shrink-0 border border-blue-100">
+                                    <i data-lucide="refresh-cw" class="w-6 h-6 text-apple-blue"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-lg tracking-tight">Actualizaciones en tiempo real</h4>
+                                    <p class="text-apple-muted text-sm mt-1 leading-relaxed">¿Se acabó el postre? Entra a la plataforma web de Xpecial, ocúltalo del menú y al instante desaparecerá de las mesas de tus clientes.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center shrink-0 border border-purple-100">
+                                    <i data-lucide="bar-chart-2" class="w-6 h-6 text-purple-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-lg tracking-tight">Mide lo que funciona</h4>
+                                    <p class="text-apple-muted text-sm mt-1 leading-relaxed">El software registra los escaneos. Descubre qué mesa tiene más rotación o a qué hora revisan más las promociones.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             VISTA 3: PARA NEGOCIOS (CERTIFICADOS)
+        =========================================== -->
+        <section id="certificados-view" class="spa-view">
+            <div class="bg-white border-b border-gray-200">
+                <div class="pt-24 pb-16 px-4 text-center max-w-3xl mx-auto">
+                    <h2 class="text-brand-purple font-semibold tracking-widest uppercase text-xs mb-3">Autenticidad & Retail</h2>
+                    <h1 class="text-4xl md:text-6xl font-bold tracking-tight text-apple-text mb-6">
+                        Certificados digitales <br> inviolables.
+                    </h1>
+                    <p class="text-lg text-apple-muted mb-8 leading-relaxed">
+                        Protege tus productos de lujo, obras de arte o artículos premium. Vincula un certificado digital único en la nube a una tarjeta física o acrílico NFC que entregas a tu cliente.
+                    </p>
+                </div>
+            </div>
+
+            <div class="max-w-6xl mx-auto px-4 py-20">
+                <div class="grid lg:grid-cols-2 gap-16 items-center">
+                    <div>
+                        <h3 class="text-3xl font-bold mb-6 tracking-tight">Confianza en cada toque.</h3>
+                        <p class="text-apple-muted text-lg mb-8">Nuestras tarjetas PVC y acrílicos cuentan con chips NFC imposibles de clonar. Tu cliente sabrá que su producto es original con solo acercar su teléfono.</p>
+                        
+                        <div class="space-y-6">
+                            <div class="flex gap-4">
+                                <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
+                                    <span class="font-bold text-gray-400">1</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-lg tracking-tight">Registra la pieza</h4>
+                                    <p class="text-apple-muted text-sm mt-1">Crea el certificado en la plataforma de Xpecial. Añade número de serie, detalles del producto y garantía.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
+                                    <span class="font-bold text-gray-400">2</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-lg tracking-tight">Vincula el Hardware</h4>
+                                    <p class="text-apple-muted text-sm mt-1">Acerca la tarjeta NFC o el acrílico a tu teléfono para guardar el registro de forma encriptada.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-12 h-12 rounded-full bg-brand-purple/10 flex items-center justify-center shrink-0">
+                                    <span class="font-bold text-brand-purple">3</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-lg tracking-tight">Verificación instantánea</h4>
+                                    <p class="text-apple-muted text-sm mt-1">El cliente final lee la tarjeta con su celular y visualiza el certificado de autenticidad alojado de forma segura en la nube.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mockup Creador -->
+                    <div class="apple-card p-4 bg-gray-50 border border-gray-100">
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden h-[400px] flex flex-col relative">
+                            <div class="border-b border-gray-100 p-4 flex justify-between items-center bg-gray-50/50">
+                                <span class="text-sm font-semibold flex items-center gap-2"><i data-lucide="shield-check" class="w-4 h-4 text-brand-purple"></i> Emisor de Certificados</span>
+                            </div>
+                            <div class="p-6 flex-1 flex flex-col items-center justify-center text-center">
+                                <i data-lucide="award" class="w-12 h-12 text-gray-300 mb-4"></i>
+                                <h5 class="font-medium text-gray-900 mb-1">Nuevo Certificado Oficial</h5>
+                                <p class="text-xs text-apple-muted">Listo para asignar a Tarjeta NFC</p>
+                                <button class="mt-4 bg-gray-900 text-white text-xs px-4 py-2 rounded-full">Crear Registro</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             VISTA 4: XPECIALIST (ALMACENES)
+        =========================================== -->
+        <section id="xpecialist-view" class="spa-view">
+            <div class="bg-apple-text text-white">
+                <div class="pt-24 pb-16 px-4 text-center max-w-3xl mx-auto">
+                    <h2 class="text-brand-teal font-semibold tracking-widest uppercase text-xs mb-3">División Logística</h2>
+                    <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-6">
+                        Xpecialist.
+                    </h1>
+                    <p class="text-lg text-gray-400 mb-8 leading-relaxed font-medium">
+                        Tu almacén en la nube. Transforma cada caja o pallet en un nodo de datos. Pasa tu celular y registra lotes enteros sin scanners costosos.
+                    </p>
+                </div>
+            </div>
+
+            <div class="max-w-6xl mx-auto px-4 py-20">
+                <div class="grid md:grid-cols-2 gap-8 mb-16">
+                    <div class="bg-white rounded-[2rem] p-10 shadow-sm border border-gray-100">
+                        <i data-lucide="scan-barcode" class="w-8 h-8 text-brand-teal mb-6"></i>
+                        <h3 class="text-xl font-bold mb-3">Escaneo por proximidad</h3>
+                        <p class="text-apple-muted text-sm leading-relaxed">Pasa el celular cerca de las cajas. Nuestro software procesa los chips NFC al instante, registrando decenas de productos en segundos.</p>
+                    </div>
+                    <div class="bg-white rounded-[2rem] p-10 shadow-sm border border-gray-100">
+                        <i data-lucide="map" class="w-8 h-8 text-brand-teal mb-6"></i>
+                        <h3 class="text-xl font-bold mb-3">Trazabilidad en tiempo real</h3>
+                        <p class="text-apple-muted text-sm leading-relaxed">Conoce el historial completo de cada lote. Revisa en el dashboard a qué hora salió y qué chofer o sucursal lo recibió.</p>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-10">
+                    <button onclick="switchView('store')" class="bg-apple-text text-white rounded-full px-8 py-3.5 font-medium hover:bg-black transition-colors shadow-md">
+                        Ver Tags Logísticos en Tienda
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             VISTA 5: TIENDA / PRE-VENTA (LISTA DE ESPERA)
+        =========================================== -->
+        <section id="store-view" class="spa-view">
+            <!-- Banner Pre-venta Ultra Limpio con Garantía -->
+            <div class="bg-apple-text text-white relative">
+                <div class="pt-24 pb-20 px-4 text-center max-w-4xl mx-auto relative z-10">
+                    <span class="inline-block border border-gray-600 text-gray-300 text-[10px] font-bold px-3 py-1 rounded-full mb-6 uppercase tracking-widest">Acceso Anticipado</span>
+                    <h1 class="text-5xl md:text-7xl font-bold tracking-tighter mb-6">
+                        Asegura tu lugar.
+                    </h1>
+                    <p class="text-lg text-gray-400 mb-8 max-w-2xl mx-auto font-medium">
+                        Reserva tu acceso a la plataforma de software con un descuento de por vida, o adquiere un paquete de hardware anticipado. Los cupos son limitados.
+                    </p>
+                    
+                    <!-- Trust Badge Garantía -->
+                    <div class="inline-flex items-center justify-center gap-3 bg-white/10 backdrop-blur border border-white/20 px-6 py-3 rounded-full">
+                        <i data-lucide="shield-check" class="w-5 h-5 text-green-400"></i>
+                        <span class="text-sm font-semibold text-white">Garantía de Despliegue: Tu pago está 100% protegido. Si el proyecto no se lanza en la fecha estipulada, te devolvemos el total de tu reserva sin preguntas.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-6xl mx-auto px-4 py-24">
+                <!-- Grid de Planes / Lista de Espera -->
+                <div class="grid md:grid-cols-3 gap-6">
+                    
+                    <!-- Opción 1: Solo Software -->
+                    <div class="apple-card flex flex-col overflow-hidden border border-brand-orange/30 p-2 shadow-[0_0_20px_rgba(245,99,0,0.1)] relative">
+                        <div class="absolute top-0 right-0 bg-brand-orange text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-widest z-20">Más Elegido</div>
+                        <div class="h-64 bg-orange-50/50 rounded-[1.2rem] flex flex-col items-center justify-center p-8 relative mb-4">
+                            <i data-lucide="cloud" class="w-16 h-16 text-brand-orange mb-4"></i>
+                            <h3 class="text-xl font-bold text-center tracking-tight text-apple-text">Reserva Solo Software</h3>
+                            <p class="text-xs text-brand-orange font-bold mt-2">Acceso Anticipado + Descuento</p>
+                        </div>
+                        <div class="px-6 pb-6 flex-1 flex flex-col">
+                            <p class="text-apple-muted text-sm mb-6 flex-1 font-medium">Asegura tu cuenta en Xpecial. Trae tu propio hardware NFC, nosotros te damos la plataforma para gestionar regalos, certificados, menús o almacenes. Mantendrás este precio especial de por vida.</p>
+                            <div class="flex items-center justify-between mt-auto">
+                                <div class="flex flex-col">
+                                    <span class="font-bold text-2xl text-apple-text">$199 <span class="text-xs text-gray-400 font-normal">MXN</span></span>
+                                    <span class="text-[10px] text-gray-400 line-through">Precio regular $499 MXN</span>
+                                </div>
+                                <button class="bg-brand-orange hover:bg-orange-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-colors shadow-md">
+                                    Reservar Lugar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Opción 2: Paquete Regalos/Certificados -->
+                    <div class="apple-card flex flex-col overflow-hidden border border-gray-100 p-2">
+                        <div class="h-64 bg-gray-50 rounded-[1.2rem] flex flex-col items-center justify-center p-8 relative mb-4">
+                            <div class="flex gap-2 mb-4">
+                                <i data-lucide="gift" class="w-8 h-8 text-brand-orange"></i>
+                                <i data-lucide="award" class="w-8 h-8 text-brand-purple"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-center tracking-tight text-apple-text">Pack Regalos & Certificados</h3>
+                            <p class="text-xs text-gray-500 font-bold mt-2">Software + Hardware Incluido</p>
+                        </div>
+                        <div class="px-6 pb-6 flex-1 flex flex-col">
+                            <p class="text-apple-muted text-sm mb-6 flex-1 font-medium">Reserva la plataforma e incluye un kit físico: 20 Cajas Premium, 50 Tarjetas PVC y 10 Acrílicos listos para ser tus próximos regalos interactivos o certificados de autenticidad.</p>
+                            <div class="flex items-center justify-between mt-auto">
+                                <div class="flex flex-col">
+                                    <span class="font-bold text-2xl text-apple-text">$2,499 <span class="text-xs text-gray-400 font-normal">MXN</span></span>
+                                </div>
+                                <button class="bg-apple-text hover:bg-black text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-colors">
+                                    Reservar Paquete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Opción 3: Paquete Almacén/Menús -->
+                    <div class="apple-card flex flex-col overflow-hidden border border-gray-100 p-2">
+                        <div class="h-64 bg-gray-50 rounded-[1.2rem] flex flex-col items-center justify-center p-8 relative mb-4">
+                            <div class="flex gap-2 mb-4">
+                                <i data-lucide="boxes" class="w-8 h-8 text-brand-teal"></i>
+                                <i data-lucide="utensils" class="w-8 h-8 text-gray-400"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-center tracking-tight text-apple-text">Pack Almacén / Menús</h3>
+                            <p class="text-xs text-gray-500 font-bold mt-2">Software + Hardware Incluido</p>
+                        </div>
+                        <div class="px-6 pb-6 flex-1 flex flex-col">
+                            <p class="text-apple-muted text-sm mb-6 flex-1 font-medium">Reserva la plataforma e incluye un kit industrial: 200 Tags NFC adhesivos (para logística) o 15 Displays NFC de acrílico para mesas de restaurante.</p>
+                            <div class="flex items-center justify-between mt-auto">
+                                <div class="flex flex-col">
+                                    <span class="font-bold text-2xl text-apple-text">$1,499 <span class="text-xs text-gray-400 font-normal">MXN</span></span>
+                                </div>
+                                <button class="bg-apple-text hover:bg-black text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-colors">
+                                    Reservar Paquete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Apple Style -->
+    <footer class="bg-white border-t border-gray-200 pt-16 pb-8 text-sm relative z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-12">
+                <div class="col-span-2 lg:col-span-2">
+                    <div class="flex items-center gap-2 mb-4">
+                        <i data-lucide="infinity" class="text-apple-text w-5 h-5"></i>
+                        <span class="font-bold text-lg text-apple-text">Xpecial</span>
+                    </div>
+                    <p class="text-apple-muted mb-6 max-w-xs">
+                        La plataforma de software que da vida al mundo físico mediante tecnología NFC.
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-apple-text mb-4">Software</h4>
+                    <ul class="space-y-2 text-apple-muted">
+                        <li><a href="#" onclick="switchView('regalos')" class="hover:text-apple-text transition-colors">Regalos Digitales</a></li>
+                        <li><a href="#" onclick="switchView('certificados')" class="hover:text-apple-text transition-colors">Certificados de Autenticidad</a></li>
+                        <li><a href="#" onclick="switchView('restaurant')" class="hover:text-apple-text transition-colors">Menús Xpecial Restaurant</a></li>
+                        <li><a href="#" onclick="switchView('xpecialist')" class="hover:text-apple-text transition-colors">Logística Xpecialist</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-apple-text mb-4">Lista de Espera</h4>
+                    <ul class="space-y-2 text-apple-muted">
+                        <li><a href="#" onclick="switchView('store')" class="hover:text-apple-text transition-colors">Reserva Solo Software</a></li>
+                        <li><a href="#" onclick="switchView('store')" class="hover:text-apple-text transition-colors">Packs de Hardware</a></li>
+                        <li><a href="#" onclick="switchView('store')" class="hover:text-apple-text transition-colors">Garantía de Despliegue</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-apple-text mb-4">Soporte</h4>
+                    <ul class="space-y-2 text-apple-muted">
+                        <li><a href="#" class="hover:text-apple-text transition-colors">Dashboard Login</a></li>
+                        <li><a href="#" class="hover:text-apple-text transition-colors">Contacto</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-100 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-apple-muted text-xs">
+                <p>Copyright © 2026 Xpecial Inc. Todos los derechos reservados.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="hover:text-apple-text transition-colors">Política de Privacidad</a>
+                    <span class="hidden md:inline">|</span>
+                    <a href="#" class="hover:text-apple-text transition-colors">Términos de Servicio</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Sidebar Carrito -->
+    <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-full md:w-[380px] bg-white border-l border-gray-200 z-[80] transform translate-x-full transition-transform duration-300 flex flex-col shadow-2xl">
+        <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+            <h2 class="text-lg font-bold text-apple-text flex items-center gap-2">
+                Tu Reserva
+            </h2>
+            <button onclick="toggleCart()" class="p-2 rounded-full hover:bg-gray-200 text-gray-500 transition-all">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+        <div class="flex-1 overflow-y-auto p-6 space-y-6">
+            <div class="flex gap-4">
+                <div class="w-20 h-20 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    <i data-lucide="cloud" class="w-8 h-8 text-brand-orange"></i>
+                </div>
+                <div class="flex-1">
+                    <h4 class="text-apple-text font-bold text-base leading-tight">Acceso Anticipado</h4>
+                    <p class="text-apple-muted text-xs mt-1">Suscripción Solo Software</p>
+                    <div class="flex justify-between items-center mt-2">
+                        <span class="text-lg font-bold">$199 <span class="text-xs text-gray-400 font-normal">MXN</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="p-6 border-t border-gray-100 bg-gray-50/50">
+            <div class="flex justify-between text-apple-muted mb-2 text-sm">
+                <span>Subtotal</span>
+                <span class="font-semibold text-apple-text">$199</span>
+            </div>
+            <div class="flex justify-between text-apple-muted mb-6 text-sm">
+                <span>Acceso a plataforma</span>
+                <span class="text-brand-orange font-medium">Post-Lanzamiento</span>
+            </div>
+            
+            <!-- Garantía en carrito -->
+            <div class="bg-green-50 border border-green-100 rounded-lg p-3 mb-4 flex items-start gap-2">
+                <i data-lucide="shield-check" class="w-4 h-4 text-green-600 shrink-0 mt-0.5"></i>
+                <p class="text-[10px] text-green-800 font-medium leading-relaxed">
+                    Tu pago está protegido. Reembolso garantizado si el proyecto no sale en la fecha estipulada.
+                </p>
+            </div>
+
+            <!-- Botón de Pago Realista -->
+            <button class="w-full bg-apple-text text-white font-bold py-4 rounded-2xl hover:bg-black hover:shadow-lg hover:shadow-black/20 transform hover:-translate-y-0.5 transition-all flex justify-center items-center gap-2 text-lg">
+                <i data-lucide="credit-card" class="w-5 h-5"></i> Pagar Ahora
+            </button>
+            <p class="text-center text-[10px] text-gray-400 mt-3 font-medium flex items-center justify-center gap-1">
+                <i data-lucide="lock" class="w-3 h-3"></i> Pago 100% seguro y encriptado
+            </p>
+        </div>
+    </div>
+    <div id="cart-overlay" onclick="toggleCart()" class="fixed inset-0 bg-black/20 backdrop-blur-sm z-[75] hidden opacity-0 transition-opacity duration-300"></div>
+
+    <!-- Scripts SPA, UI y Animación Cinematográfica -->
+    <script>
+        lucide.createIcons();
+
+        // --- LÓGICA DE ANIMACIÓN CON SCROLL (APPLE STYLE FIX) ---
+        window.addEventListener('scroll', () => {
+            const seqSection = document.getElementById('scroll-sequence');
+            if (!seqSection || !document.getElementById('home-view').classList.contains('active')) return;
+
+            const rect = seqSection.getBoundingClientRect();
+            const scrollStart = rect.top; 
+            const scrollDist = rect.height - window.innerHeight;
+
+            let progress = -scrollStart / scrollDist;
+            progress = Math.max(0, Math.min(1, progress));
+
+            const box = document.getElementById('seq-box');
+            const phone = document.getElementById('seq-phone');
+            const text1 = document.getElementById('seq-text-1');
+            const text2 = document.getElementById('seq-text-2');
+            const screenOverlay = document.getElementById('seq-screen-overlay');
+            const uiPop = document.getElementById('seq-ui-pop');
+            const nfcGlow = document.getElementById('seq-nfc-glow');
+
+            // FIX OVERLAP: El teléfono sube solo hasta 25vh para no tapar los textos en top-[10%]
+            let phoneY = 100 - (Math.min(progress, 0.3) / 0.3) * 75; 
+            
+            let splitProgress = Math.max(0, Math.min(progress - 0.3, 0.3)) / 0.3;
+            // Desplazamiento horizontal al dividirse
+            let boxX = splitProgress * -140; 
+            let phoneX = splitProgress * 140; 
+            let phoneScale = 1 + (splitProgress * 0.15);
+
+            let revealProgress = Math.max(0, Math.min(progress - 0.6, 0.3)) / 0.3;
+
+            // Transformaciones de Texto (Con efecto glow para asegurar lectura si algo pasa por detrás)
+            text1.style.opacity = 1 - (progress * 4); 
+            text2.style.opacity = revealProgress;
+            text2.style.transform = `translateY(${20 - revealProgress*20}px)`;
+
+            // Transformaciones Físicas
+            box.style.transform = `translateX(${boxX}px) rotate(${splitProgress * -8}deg)`;
+            phone.style.transform = `translate(${phoneX}px, ${phoneY}vh) scale(${phoneScale})`;
+
+            // Pantalla
+            screenOverlay.style.opacity = 1 - revealProgress;
+            nfcGlow.style.opacity = splitProgress > 0.5 ? (1 - revealProgress) : 0;
+
+            if(revealProgress > 0.5) {
+                uiPop.classList.add('scale-100', 'opacity-100');
+                uiPop.classList.remove('scale-95', 'opacity-0');
+            } else {
+                uiPop.classList.remove('scale-100', 'opacity-100');
+                uiPop.classList.add('scale-95', 'opacity-0');
+            }
+        });
+
+        // --- LÓGICA SPA ---
+        const views = ['home', 'regalos', 'certificados', 'restaurant', 'xpecialist', 'store'];
+
+        function switchView(viewId) {
+            views.forEach(v => {
+                const viewEl = document.getElementById(v + '-view');
+                if(viewEl) viewEl.classList.remove('active');
+                
+                const navBtn = document.getElementById('nav-' + v);
+                if(navBtn) {
+                    navBtn.classList.remove('text-apple-text');
+                    navBtn.classList.add('text-apple-muted');
+                }
+            });
+
+            const targetView = document.getElementById(viewId + '-view');
+            if(targetView) targetView.classList.add('active');
+
+            const targetNav = document.getElementById('nav-' + viewId);
+            if(targetNav) {
+                targetNav.classList.remove('text-apple-muted');
+                targetNav.classList.add('text-apple-text');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        document.getElementById('nav-home').classList.add('text-apple-text');
+        document.getElementById('nav-home').classList.remove('text-apple-muted');
+
+        // --- LÓGICA DEL CARRITO ---
+        let cartOpen = false;
+        const cartSidebar = document.getElementById('cart-sidebar');
+        const cartOverlay = document.getElementById('cart-overlay');
+
+        function toggleCart() {
+            cartOpen = !cartOpen;
+            if (cartOpen) {
+                cartSidebar.classList.remove('translate-x-full');
+                cartOverlay.classList.remove('hidden');
+                setTimeout(() => {
+                    cartOverlay.classList.remove('opacity-0');
+                    cartOverlay.classList.add('opacity-100');
+                }, 10);
+                document.body.style.overflow = 'hidden'; 
+            } else {
+                cartSidebar.classList.add('translate-x-full');
+                cartOverlay.classList.remove('opacity-100');
+                cartOverlay.classList.add('opacity-0');
+                setTimeout(() => {
+                    cartOverlay.classList.add('hidden');
+                }, 300);
+                document.body.style.overflow = ''; 
+            }
+        }
+
+        let menuOpen = false;
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        function toggleMobileMenu() {
+            menuOpen = !menuOpen;
+            if (menuOpen) {
+                mobileMenu.classList.remove('hidden');
+            } else {
+                mobileMenu.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
